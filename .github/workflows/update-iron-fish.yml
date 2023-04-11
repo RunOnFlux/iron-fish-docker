@@ -2,7 +2,7 @@ name: Update Iron Fish Image
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Run every 5 minutes
+    - cron: '0 0 * * *' # Run daily at midnight
       workflow_dispatch: # Allows manual triggering
       
   push:
