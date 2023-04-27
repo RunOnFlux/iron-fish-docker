@@ -27,7 +27,7 @@ jobs:
 
     - name: Check for updated image
       run: |
-        SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
+        SOURCE_IMAGE=ghcr.io/iron-fish/ironfish:latest
         TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
         # Push the latest images of Iron Fish
         docker tag $SOURCE_IMAGE ${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest
