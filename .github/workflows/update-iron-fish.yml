@@ -1,4 +1,4 @@
-name: Update Iron Fish Image
+name: Pull + Push + Update Iron Fish Image
 
 on:
   schedule:
