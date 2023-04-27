@@ -42,7 +42,7 @@ jobs:
 #           echo "IMAGE_CHANGED=false" >> $GITHUB_ENV
 #         fi
     - name: Update image on Docker Hub
-      if: env.IMAGE_CHANGED == 'true'
+#       if: env.IMAGE_CHANGED == 'true'
       run: |
         SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
         TARGET_IMAGE="runonflux/iron-fish:latest"
