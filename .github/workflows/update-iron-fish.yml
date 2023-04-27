@@ -27,7 +27,7 @@ jobs:
 
     - name: Check for updated image
       run: |
-        SOURCE_IMAGE=ghcr.io/iron-fish/ironfish:v1.1.0
+        SOURCE_IMAGE="https://ghcr.io/iron-fish/ironfish:v1.1.0"
         TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
         # Push the latest images of Iron Fish
         docker tag $SOURCE_IMAGE ${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest
@@ -47,7 +47,7 @@ jobs:
     - name: Update image on Docker Hub
       if: env.IMAGE_CHANGED == 'true'
       run: |
-        SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:v1.1.0"
+        SOURCE_IMAGE="https://ghcr.io/iron-fish/ironfish:v1.1.0"
         TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
         # Tag the new image
         docker tag $SOURCE_IMAGE $TARGET_IMAGE
