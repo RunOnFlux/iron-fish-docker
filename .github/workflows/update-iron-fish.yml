@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -25,31 +25,45 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-    - name: Check for updated image
+    - name: Pull source and target images
       run: |
-        SOURCE_IMAGE="https://ghcr.io/iron-fish/ironfish:v1.1.0"
+        SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
         TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
-        # Push the latest images of Iron Fish
-        docker tag $SOURCE_IMAGE ${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest
-        # Pull the latest images
+
+        # Pull the latest source image
         docker pull $SOURCE_IMAGE
-        docker pull $TARGET_IMAGE
+        # Try to pull the latest target image
+        docker pull $TARGET_IMAGE || echo "Target image not found"
+
+    - name: Push image if it doesn't exist
+      run: |
+        SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
+        TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
+
+        # Get the target image ID
+        TARGET_IMAGE_ID=$(docker images $TARGET_IMAGE -q)
+
+        # If target image doesn't exist, push the source image to Docker Hub
+        if [ -z "$TARGET_IMAGE_ID" ]; then
+          echo "Target image not found, pushing to Docker Hub..."
+          docker tag $SOURCE_IMAGE $TARGET_IMAGE
+          docker push $TARGET_IMAGE
+        fi
+
+    - name: Check for updated image and push if needed
+      run: |
+        SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
+        TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
+
         # Get the image IDs
         SOURCE_IMAGE_ID=$(docker images $SOURCE_IMAGE -q)
         TARGET_IMAGE_ID=$(docker images $TARGET_IMAGE -q)
+
         # Check if the image IDs are different
         if [ "$SOURCE_IMAGE_ID" != "$TARGET_IMAGE_ID" ]; then
-          echo "IMAGE_CHANGED=true" >> $GITHUB_ENV
+          echo "Image has changed, updating on Docker Hub..."
+          docker tag $SOURCE_IMAGE $TARGET_IMAGE
+          docker push $TARGET_IMAGE
         else
-          echo "IMAGE_CHANGED=false" >> $GITHUB_ENV
+          echo "Image has not changed, no update needed."
         fi
-    - name: Update image on Docker Hub
-      if: env.IMAGE_CHANGED == 'true'
-      run: |
-        SOURCE_IMAGE="https://ghcr.io/iron-fish/ironfish:v1.1.0"
-        TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
-        # Tag the new image
-        docker tag $SOURCE_IMAGE $TARGET_IMAGE
-        # Push the new image
-        docker push $TARGET_IMAGE
