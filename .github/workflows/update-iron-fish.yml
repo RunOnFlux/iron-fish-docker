@@ -30,8 +30,8 @@ jobs:
         SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
         TARGET_IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest"
         # Push the latest images of Iron Fish
-        docker tag ghcr.io/iron-fish/ironfish:latest runonflux/iron-fish:latest
-        docker push runonflux/iron-fish:latest
+        docker tag $SOURCE_IMAGE ${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/iron-fish:latest
         # Pull the latest images
         docker pull $SOURCE_IMAGE
         docker pull $TARGET_IMAGE
