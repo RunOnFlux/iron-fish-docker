@@ -25,22 +25,22 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-    - name: Check for updated image
-      run: |
-        SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
-        TARGET_IMAGE="runonflux/iron-fish:latest"
-        # Pull the latest images
-        docker pull $SOURCE_IMAGE
-        docker pull $TARGET_IMAGE
-        # Get the image IDs
-        SOURCE_IMAGE_ID=$(docker images $SOURCE_IMAGE -q)
-        TARGET_IMAGE_ID=$(docker images $TARGET_IMAGE -q)
-        # Check if the image IDs are different
-        if [ "$SOURCE_IMAGE_ID" != "$TARGET_IMAGE_ID" ]; then
-          echo "IMAGE_CHANGED=true" >> $GITHUB_ENV
-        else
-          echo "IMAGE_CHANGED=false" >> $GITHUB_ENV
-        fi
+#     - name: Check for updated image
+#       run: |
+#         SOURCE_IMAGE="ghcr.io/iron-fish/ironfish:latest"
+#         TARGET_IMAGE="runonflux/iron-fish:latest"
+#         # Pull the latest images
+#         docker pull $SOURCE_IMAGE
+#         docker pull $TARGET_IMAGE
+#         # Get the image IDs
+#         SOURCE_IMAGE_ID=$(docker images $SOURCE_IMAGE -q)
+#         TARGET_IMAGE_ID=$(docker images $TARGET_IMAGE -q)
+#         # Check if the image IDs are different
+#         if [ "$SOURCE_IMAGE_ID" != "$TARGET_IMAGE_ID" ]; then
+#           echo "IMAGE_CHANGED=true" >> $GITHUB_ENV
+#         else
+#           echo "IMAGE_CHANGED=false" >> $GITHUB_ENV
+#         fi
     - name: Update image on Docker Hub
       if: env.IMAGE_CHANGED == 'true'
       run: |
